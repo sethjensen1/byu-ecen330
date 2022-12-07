@@ -25,14 +25,16 @@ install:
 		make \
 		python3-pip \
 		build-essential \
-		qt5-default \
+		qtbase5-dev \
 		clang-format \
 		zip \
 		python3-pip \
-		x11-apps 
+		x11-apps \
+		cmake
 
-# Remove old cmake package from apt
-	sudo apt purge -y cmake 
-
-# Install newer cmake package from pip
-	sudo pip3 install --upgrade cmake
+install_board:
+	sudo apt install -y \
+		gcc-arm-none-eabi \
+		python3-serial \
+		xterm \
+		openocd
