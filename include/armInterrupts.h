@@ -54,7 +54,8 @@ For questions, contact Brad Hutchings or Jeff Goeders, https://ece.byu.edu/
 //#define SELECTED_XADC_CHANNEL XADC_AUX_CHANNEL_15
 
 // Uses interval timer 0 to measure time spent in ISR.
-#define ENABLE_INTERVAL_TIMER_0_IN_TIMER_ISR 0
+#define ENABLE_INTERVAL_TIMER_0_IN_TIMER_ISR 1
+
 // Interval timer to use to capture total ISR runtime
 #define INTERRUPT_CUMULATIVE_ISR_INTERVAL_TIMER_NUMBER 0
 
