@@ -82,7 +82,7 @@ def main():
                 diff_cmd = [
                     "/bin/bash",
                     "-c",
-                    "diff -u <(cat " + str(f) + ") <(clang-format-6.0 " + str(f) + ")",
+                    "diff -u <(cat " + str(f) + ") <(clang-format-12 " + str(f) + ")",
                 ]
                 p = subprocess.Popen(diff_cmd, stdout=subprocess.PIPE)
                 stdout = p.communicate()[0]
