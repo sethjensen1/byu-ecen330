@@ -13,6 +13,7 @@ extensions_to_format = [".c", ".h"]
 
 dirs_files_to_exclude = [
     "build/",
+    "tools/",
     "build_emu",
     "platforms/hw/",
     "platforms/emulator/include/xparameters.h",
@@ -82,7 +83,7 @@ def main():
                 diff_cmd = [
                     "/bin/bash",
                     "-c",
-                    "diff -u <(cat " + str(f) + ") <(clang-format-6.0 " + str(f) + ")",
+                    "diff -u <(cat " + str(f) + ") <(clang-format-12 " + str(f) + ")",
                 ]
                 p = subprocess.Popen(diff_cmd, stdout=subprocess.PIPE)
                 stdout = p.communicate()[0]
@@ -94,7 +95,7 @@ def main():
                         sys.exit(1)
                     print("Formatting", f.relative_to(repo_root_dir))
 
-                    cmd = ["clang-format-6.0", "-i", "-style=LLVM", f]
+                    cmd = ["clang-format-12", "-i", "-style=LLVM", f]
                     subprocess.run(cmd)
 
                     num_formatted += 1
