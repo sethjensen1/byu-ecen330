@@ -20,7 +20,7 @@ require:
 	done
 	@echo "Done."
 
-setup: require $(GXX_BAREMETAL_ARM_2020-2)
+setup: $(GXX_BAREMETAL_ARM_2020-2) require 
 	git submodule init
 	git submodule update
 
@@ -42,14 +42,12 @@ install:
 
 install_board:
 	sudo apt install -y \
-		gcc-arm-none-eabi \
 		python3-serial \
 		xterm \
 		openocd
 
 $(GXX_BAREMETAL_ARM_2020-2): $(TOOLS_DIR)
 	cd $(TEMPD) && \
-	rm -rf gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2* && \
 	wget "https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2?revision=108bd959-44bd-4619-9c19-26187abf5225&hash=46AF221F493505D04113CD7FD10F378688940FC8" && \
 	tar -xf "gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2?revision=108bd959-44bd-4619-9c19-26187abf5225&hash=46AF221F493505D04113CD7FD10F378688940FC8" && \
 	cp -r gcc-arm-none-eabi-9-2019-q4-major $(TOOLS_DIR)/
