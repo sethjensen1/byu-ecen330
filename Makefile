@@ -26,10 +26,10 @@ setup: $(GXX_BAREMETAL_ARM_2020-2) require
 
 install:
 # Update package repositories
-	sudo apt update
+	sudo apt-get update
 
 # Install these packages using apt
-	sudo apt install -y \
+	sudo apt-get install -y \
 		make \
 		python3-pip \
 		build-essential \
@@ -41,7 +41,7 @@ install:
 		cmake
 
 install_board:
-	sudo apt install -y \
+	sudo apt-get install -y \
 		python3-serial \
 		xterm \
 		openocd
