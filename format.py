@@ -94,7 +94,7 @@ def main():
                         sys.exit(1)
                     print("Formatting", f.relative_to(repo_root_dir))
 
-                    cmd = ["clang-format-6.0", "-i", "-style=LLVM", f]
+                    cmd = ["clang-format-12", "-i", "-style=LLVM", f]
                     subprocess.run(cmd)
 
                     num_formatted += 1
