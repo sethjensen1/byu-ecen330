@@ -13,6 +13,7 @@ extensions_to_format = [".c", ".h"]
 
 dirs_files_to_exclude = [
     "build/",
+    "tools/",
     "build_emu",
     "platforms/hw/",
     "platforms/emulator/include/xparameters.h",
