@@ -27,9 +27,10 @@ dirs_files_to_exclude = [
     "instructor/code_obfuscation",
 ]
 
+CLANG_FORMAT_EXE = "clang-format"
+
 
 def main():
-
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--check",
@@ -73,7 +74,6 @@ def main():
     for d in dirs_matched:
         for ext in extensions_to_format:
             for f in d.glob("*" + ext):
-
                 # Skip excluded files
                 if str(f.relative_to(repo_root_dir)) in dirs_files_to_exclude:
                     continue
@@ -83,7 +83,7 @@ def main():
                 diff_cmd = [
                     "/bin/bash",
                     "-c",
-                    "diff -u <(cat " + str(f) + ") <(clang-format-12 " + str(f) + ")",
+                    f"diff -u <(cat {f}) <({CLANG_FORMAT_EXE} {f})",
                 ]
                 p = subprocess.Popen(diff_cmd, stdout=subprocess.PIPE)
                 stdout = p.communicate()[0]
@@ -95,7 +95,7 @@ def main():
                         sys.exit(1)
                     print("Formatting", f.relative_to(repo_root_dir))
 
-                    cmd = ["clang-format-12", "-i", "-style=LLVM", f]
+                    cmd = [CLANG_FORMAT_EXE, "-i", "-style=LLVM", f]
                     subprocess.run(cmd)
 
                     num_formatted += 1

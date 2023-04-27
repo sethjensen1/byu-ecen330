@@ -3,8 +3,10 @@ SET(CMAKE_SYSTEM_NAME Generic)
 SET(CMAKE_SYSTEM_PROCESSOR armv7)
 SET(CMAKE_CROSSCOMPILING 1)
 
-set(CMAKE_C_COMPILER "${ROOT_DIR}/tools/gcc-arm-none-eabi-9-2019-q4-major/bin/arm-none-eabi-gcc")
-set(CMAKE_CXX_COMPILER "${ROOT_DIR}/tools/gcc-arm-none-eabi-9-2019-q4-major/bin/arm-none-eabi-g++")
+# set(CMAKE_C_COMPILER "${ROOT_DIR}/tools/gcc-arm-none-eabi-9-2019-q4-major/bin/arm-none-eabi-gcc")
+set(CMAKE_C_COMPILER "arm-none-eabi-gcc")
+# set(CMAKE_CXX_COMPILER "${ROOT_DIR}/tools/gcc-arm-none-eabi-9-2019-q4-major/bin/arm-none-eabi-g++")
+set(CMAKE_CXX_COMPILER "arm-none-eabi-g++")
 SET(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
 SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
 

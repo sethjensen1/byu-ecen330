@@ -2,7 +2,7 @@
 ROOT_DIR = $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 TOOLS_DIR = $(ROOT_DIR)/tools
 
-EXECUTABLES_REQUIRED = make qtconfig clang-format-12 zip cmake 
+EXECUTABLES_REQUIRED = make qtconfig clang-format zip cmake 
 EXECUTABLES_OPTIONAL = arm-none-eabi-gcc openocd
 
 GXX_BAREMETAL_ARM_2020-2 = $(TOOLS_DIR)/gcc-arm-none-eabi-9-2019-q4-major/bin/arm-none-eabi-g++
@@ -20,7 +20,7 @@ require:
 	done
 	@echo "Done."
 
-setup: $(GXX_BAREMETAL_ARM_2020-2) require 
+setup: require 
 	git submodule init
 	git submodule update
 
@@ -38,7 +38,8 @@ install:
 		zip \
 		python3-pip \
 		x11-apps \
-		cmake
+		cmake \
+		gcc-arm-none-eabi
 
 install_board:
 	sudo apt-get install -y \
