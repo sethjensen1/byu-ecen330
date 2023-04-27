@@ -413,10 +413,14 @@ def main():
     parser.add_argument(
         "--no_run", action="store_true", help="Test the lab build, but don't run the emulator"
     )
+    parser.add_argument(
+        "--format_code", action="store_true", help="Format code before zipping"
+    )
     args = parser.parse_args()
 
     # First format student's code
-    format_code()
+    if args.format_code:
+        format_code()
 
     # Get a list of files need to build and zip
     files = get_files_to_copy_and_zip(args.lab)
