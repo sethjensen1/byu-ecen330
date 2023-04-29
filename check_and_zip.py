@@ -99,9 +99,9 @@ def get_lab_folder_name(lab):
         return "lab5_touchscreen"
     if lab == "lab6":
         return "lab6_clock"
-    if lab in ("lab7m1", "lab7m2"):
+    if lab in ("lab7", "lab7m1", "lab7m2"):
         return "lab7_tictactoe"
-    if lab in ("lab8m1", "lab8m2", "lab8m3"):
+    if lab in ("lab8", "lab8m1", "lab8m2", "lab8m3"):
         return "lab8_missilecommand"
     if lab == "lab9":
         return "lab9_project"
@@ -162,7 +162,7 @@ def get_files_to_copy_and_zip(lab):
         files.append((chk_lab_path / "cmake", dest_lab_path / "CMakeLists.txt", False))
         files.append((src_lab_path / "minimax.c", dest_lab_path, True))
         files.append((src_lab_path / "testBoards.c", dest_lab_path, True))
-    elif lab == "lab7m2":
+    elif lab == "lab7" or lab == "lab7m2":
         files.append((chk_lab_path / "drivers.cmake", dest_libs_path / "CMakeLists.txt", False))
         files.append((chk_lab_path / "cmake", dest_lab_path / "CMakeLists.txt", False))
         files.append((src_libs_path / "buttons.c", dest_libs_path, False))
@@ -170,8 +170,9 @@ def get_files_to_copy_and_zip(lab):
         files.append((src_libs_path / "interrupts.c", dest_libs_path, False))
         files.append((src_libs_path / "touchscreen.c", dest_libs_path, False))
         files.append((src_libs_path / "intervalTimer.c", dest_libs_path, False))
-        files.append((src_lab_path / "ticTacToeControl.c", dest_lab_path, True))
         files.append((src_lab_path / "minimax.c", dest_lab_path, True))
+        files.append((src_lab_path / "testBoards.c", dest_lab_path, True))
+        files.append((src_lab_path / "ticTacToeControl.c", dest_lab_path, True))
     elif lab == "lab8m1":
         files.append((chk_lab_path / "drivers.cmake", dest_libs_path / "CMakeLists.txt", False))
         files.append((chk_lab_path / "cmake", dest_lab_path / "CMakeLists.txt", False))
@@ -186,15 +187,15 @@ def get_files_to_copy_and_zip(lab):
         files.append((src_libs_path / "intervalTimer.c", dest_libs_path, False))
         files.append((src_lab_path / "missile.c", dest_lab_path, True))
         files.append((src_lab_path / "gameControl.c", dest_lab_path, True))
-    elif lab == "lab8m3":
+    elif lab == "lab8" or lab == "lab8m3":
         files.append((chk_lab_path / "drivers.cmake", dest_libs_path / "CMakeLists.txt", False))
         files.append((chk_lab_path / "cmake", dest_lab_path / "CMakeLists.txt", False))
         files.append((src_libs_path / "interrupts.c", dest_libs_path, False))
         files.append((src_libs_path / "touchscreen.c", dest_libs_path, False))
         files.append((src_libs_path / "intervalTimer.c", dest_libs_path, False))
         files.append((src_lab_path / "missile.c", dest_lab_path, True))
-        files.append((src_lab_path / "plane.c", dest_lab_path, True))
         files.append((src_lab_path / "gameControl.c", dest_lab_path, True))
+        files.append((src_lab_path / "plane.c", dest_lab_path, True))
     elif lab == "lab9":
         files.append((chk_lab_path / "drivers.cmake", dest_libs_path / "CMakeLists.txt", False))
         files.append((src_libs_path / "buttons.c", dest_libs_path, False))
@@ -313,7 +314,7 @@ def build():
                 TermColors.YELLOW
                 + "Your code has "
                 + str(len(matches))
-                + " warning(s).  You will lose a coding standard point for each warning.  Are you sure you want to continue? (y/n) "
+                + " warning(s). You will lose a coding standard point for each warning. Are you sure you want to continue? (y/n) "
                 + TermColors.END
             ).lower()
         if input_txt == "n":
@@ -398,16 +399,18 @@ def main():
             "lab4",
             "lab5",
             "lab6",
-            "lab7m1",
-            "lab7m2",
-            "lab8m1",
-            "lab8m2",
-            "lab8m3",
+            "lab7",
+            # "lab7m1",
+            # "lab7m2",
+            "lab8",
+            # "lab8m1",
+            # "lab8m2",
+            # "lab8m3",
             "lab9",
-            "390m3-1",
-            "390m3-2",
-            "390m3-3",
-            "390m5",
+            # "390m3-1",
+            # "390m3-2",
+            # "390m3-3",
+            # "390m5",
         ],
     )
     parser.add_argument(
@@ -433,7 +436,7 @@ def main():
             while input_txt not in ["y", "n"]:
                 input_txt = input(
                     TermColors.YELLOW
-                    + "Could not clone Github repo.  Perhaps you are not connected to the internet. "
+                    + "Could not clone Github repo. Perhaps you are not connected to the internet. "
                     "It is recommended that you cancel the process, connect to the internet, and retry. "
                     "If you proceed, the generated zip file will be untested, and may not build properly on the TA's evaluation system. "
                     "Are you sure you want to proceed? (y/n) " + TermColors.END
