@@ -10,37 +10,39 @@
 #define CIRCLE_RADIUS_MAX 50
 #define MS_PER_S 1000
 
-volatile bool press_detected = false;
-volatile display_point_t point;
+volatile static display_point_t point1;
+volatile static uint8_t radius;
 
-static enum {
+volatile static enum {
   TEST_IDLE_ST,
   TEST_TOUCH_PRESSED_ST,
   TEST_TOUCH_RELEASED_ST
 } currentState = TEST_IDLE_ST;
 
-uint8_t radius;
 
 // Tick the test code application
 void test_tick() {
+  display_point_t point2 = {0, 0};
   // Get the current status of the touchscreen
   touchscreen_status_t status = touchscreen_get_status();
 
   // Transition
   switch (currentState) {
   case TEST_IDLE_ST:
-    if (status != TEST_IDLE_ST) {
+    if (status != TOUCHSCREEN_IDLE) {
       currentState = TEST_TOUCH_PRESSED_ST;
 
       // New button press detected, draw filled circle
-      point = touchscreen_get_location();
+      point1 = touchscreen_get_location();
       radius = 1;
-      printf("x: %hu y: %hu\n", point.x, point.y);
+      printf("x: %hu y: %hu\n", point1.x, point1.y);
     }
     break;
   case TEST_TOUCH_PRESSED_ST:
-    if (status == TOUCHSCREEN_RELEASED)
+    if (status == TOUCHSCREEN_RELEASED) {
       currentState = TEST_TOUCH_RELEASED_ST;
+      point2 = touchscreen_get_location();
+	}
     break;
   case TEST_TOUCH_RELEASED_ST:
     currentState = TEST_IDLE_ST;
@@ -51,15 +53,17 @@ void test_tick() {
   switch (currentState) {
   case TEST_TOUCH_PRESSED_ST:
     if (radius < CIRCLE_RADIUS_MAX) {
-      display_fillCircle(point.x, point.y, radius, DISPLAY_RED);
+      display_fillCircle(point1.x, point1.y, radius, DISPLAY_RED);
       radius++;
     }
     break;
   case TEST_TOUCH_RELEASED_ST:
     // Press released, draw empty circle and acknowledge press
-    press_detected = false;
-    display_fillCircle(point.x, point.y, radius, DISPLAY_BLACK);
-    display_drawCircle(point.x, point.y, radius, DISPLAY_RED);
+    display_fillCircle(point1.x, point1.y, radius, DISPLAY_BLACK);
+    display_drawCircle(point1.x, point1.y, radius, DISPLAY_RED);
+    // Shows blue circle if release location is different from press
+    if (point1.x != point2.x || point1.y != point2.y)	
+      display_drawCircle(point2.x, point2.y, radius, DISPLAY_BLUE);
     touchscreen_ack_touch();
     break;
   }
