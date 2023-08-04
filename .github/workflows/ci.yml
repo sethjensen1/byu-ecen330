@@ -3,7 +3,7 @@ on: push
 
 jobs:
   all:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v2
     - name: Install packages
@@ -17,4 +17,4 @@ jobs:
     - name: Check C/C++ formatting
       run: ./format.py --check --all
     - name: Run check_and_zip.py
-      run: ./check_and_zip.py --no_run lab1
+      run: ./check_and_zip.py lab1
