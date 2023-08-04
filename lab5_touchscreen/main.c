@@ -19,7 +19,6 @@ volatile static enum {
   TEST_TOUCH_RELEASED_ST
 } currentState = TEST_IDLE_ST;
 
-
 // Tick the test code application
 void test_tick() {
   display_point_t point2 = {0, 0};
@@ -42,7 +41,7 @@ void test_tick() {
     if (status == TOUCHSCREEN_RELEASED) {
       currentState = TEST_TOUCH_RELEASED_ST;
       point2 = touchscreen_get_location();
-	}
+    }
     break;
   case TEST_TOUCH_RELEASED_ST:
     currentState = TEST_IDLE_ST;
@@ -62,7 +61,7 @@ void test_tick() {
     display_fillCircle(point1.x, point1.y, radius, DISPLAY_BLACK);
     display_drawCircle(point1.x, point1.y, radius, DISPLAY_RED);
     // Shows blue circle if release location is different from press
-    if (point1.x != point2.x || point1.y != point2.y)	
+    if (point1.x != point2.x || point1.y != point2.y)
       display_drawCircle(point2.x, point2.y, radius, DISPLAY_BLUE);
     touchscreen_ack_touch();
     break;
