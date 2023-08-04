@@ -414,7 +414,7 @@ def main():
         ],
     )
     parser.add_argument(
-        "--no_run", action="store_true", help="Test the lab build, but don't run the emulator"
+        "--run", action="store_true", help="run code after building"
     )
     parser.add_argument(
         "--format_code", action="store_true", help="Format code before zipping"
@@ -428,15 +428,15 @@ def main():
     # Get a list of files need to build and zip
     files = get_files_to_copy_and_zip(args.lab)
 
-    # For 390, we don't build/run anything, so just skip to the zip process
-    if not args.lab.startswith("390"):
+    # For Lab 9 and 390, we don't build/run anything, so just skip to the zip process
+    if args.lab != "lab9" and not args.lab.startswith("390"):
         # Clone/clean 330 repo
         if not clone_student_repo():
             input_txt = ""
             while input_txt not in ["y", "n"]:
                 input_txt = input(
                     TermColors.YELLOW
-                    + "Could not clone Github repo. Perhaps you are not connected to the internet. "
+                    + "Could not clone GitHub repo. Perhaps you are not connected to the internet. "
                     "It is recommended that you cancel the process, connect to the internet, and retry. "
                     "If you proceed, the generated zip file will be untested, and may not build properly on the TA's evaluation system. "
                     "Are you sure you want to proceed? (y/n) " + TermColors.END
@@ -460,21 +460,17 @@ def main():
                 if s == "n":
                     sys.exit(0)
 
-            # Loop through executables
-            for (milestone_name, elf_name) in get_milestones(args.lab):
-                if args.no_run:
-                    print_color(TermColors.BLUE, "Now Testing", milestone_name)
-                else:
+            # Run it
+            if args.run:
+                # Loop through executables
+                for (milestone_name, elf_name) in get_milestones(args.lab):
                     input(
                         TermColors.BLUE
-                        + "Now Testing "
+                        + "Ready to run "
                         + milestone_name
                         + ". Hit <Enter> to continue."
                         + TermColors.END
                     )
-
-                # Run it
-                if not args.no_run:
                     print_color(TermColors.BLUE, "Running", args.lab, milestone_name)
                     print_color(
                         TermColors.BLUE,

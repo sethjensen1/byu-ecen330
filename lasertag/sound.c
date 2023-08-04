@@ -9,7 +9,6 @@ For questions, contact Brad Hutchings or Jeff Goeders, https://ece.byu.edu/
 
 #include <stdio.h>
 
-#include "interrupts.h" // Just for sound_runTest().
 #include "sound.h"
 #include "sounds/bcfire01_48k.wav.h"
 #include "sounds/gameBoyStartup.wav.h"
@@ -25,7 +24,7 @@ For questions, contact Brad Hutchings or Jeff Goeders, https://ece.byu.edu/
 #include "xil_types.h"
 
 /***************************************************************
- * Quite a bit of this code was obtained from digilentinc.com
+ * Quite a bit of this code was obtained from digilent.com
  * so it does not necessarily meet the coding standard.
  ****************************************************************/
 
@@ -404,7 +403,7 @@ static int AudioRegSet(XIicPs *IIcPtr, u8 regAddr, u16 regData) {
   // while (XIicPs_BusIsBusy(IIcPtr)) {
   //   /* NOP */
   // }
-  // return XST_SUCCESS;
+  return XST_SUCCESS;
 }
 
 /***  AudioInitialize(u16 timerID,  u16 iicID, u32 i2sAddr)
