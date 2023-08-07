@@ -8,14 +8,15 @@ import serial
 import shutil
 import pathlib
 
-VITIS_BIN = "/opt/Xilinx/Vitis/2019.2/bin/vitis"
+XSDB_BIN_LINUX = "/tools/Xilinx/Vivado/2023.1/bin/xsdb"
 XSCT_BIN_WINDOWS = "C:/Xilinx/Vitis/2020.2/bin/xsct"
+XIL_DIR = "temp/xilinx"
 
 LABS_DIR = pathlib.Path(__file__).resolve().parent
 
 
 class TermColors:
-    """Terminal codes for printing in color"""
+    """ Terminal codes for printing in color """
 
     PURPLE = "\033[95m"
     BLUE = "\033[94m"
@@ -28,12 +29,12 @@ class TermColors:
 
 
 def print_color(color, *msg):
-    """Print a message in color"""
+    """ Print a message in color """
     print(color + " ".join(str(item) for item in msg), TermColors.END)
 
 
 def error(*msg, returncode=-1):
-    """Print an error message and exit program"""
+    """ Print an error message and exit program """
     print_color(TermColors.RED, "ERROR:", *msg)
     sys.exit(returncode)
 
@@ -57,7 +58,7 @@ def find_serial(interface_id):
 
     if not matches:
         error(
-            "No board could be found.  Make sure the board is plugged in and powered on.  You can also try powering it off and back on."
+            "No board could be found. Make sure the board is plugged in and powered on. You can also try powering it off and back on."
         )
     if len(matches) > 1:
         error(
@@ -71,16 +72,21 @@ def find_serial(interface_id):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--windows",
+        "--openocd",
         action="store_true",
-        help="This flag indicates the Xilinx tools are installed in Windows",
+        help="Use the OpenOCD programmer in Linux. (default)",
     )
     parser.add_argument(
-        "--xilinx_programmer",
+        "--windows",
         action="store_true",
-        help="Use the Xilinx programmer instead of the openocd programmer.",
+        help="Use the Xilinx programmer in Windows.",
     )
-    parser.add_argument("elf", help="The elf file to run (ex. 'lab1/lab1.elf')")
+    parser.add_argument(
+        "--xilinx",
+        action="store_true",
+        help="Use the Xilinx programmer in Linux.",
+    )
+    parser.add_argument("elf", help="The elf file to run (e.g., 'lab1/lab1.elf')")
     args = parser.parse_args()
 
     elf_path = pathlib.Path(args.elf).absolute()
@@ -106,7 +112,7 @@ def main():
 
     # If running tools from Windows, copy necessary files to Windows directory.
     if args.windows:
-        win_temp_path = pathlib.Path("/mnt/c/temp/ecen330")
+        win_temp_path = pathlib.Path("/mnt/c/" + XIL_DIR)
         win_temp_path.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(elf_path, win_temp_path / "program.elf")
         shutil.copyfile(
@@ -120,30 +126,32 @@ def main():
             LABS_DIR / "platforms/hw/330_hw_system.xsa", win_temp_path / "330_hw_system.xsa"
         )
 
-    # Execute programming and print output
-
+    # Download ELF program to board and run
     if args.windows:
-        # Use xilinx programmer in Windows
+        # TODO: Switch this over to using xsdb
+        # Use Xilinx programmer in Windows
         cmd = [
             "cmd.exe",
             "/C",
-            "cd C:/temp/ecen330 && " + XSCT_BIN_WINDOWS + " C:/temp/ecen330/run_elf_windows.tcl",
+            "cd C:/" + XIL_DIR + " && " + XSCT_BIN_WINDOWS + " C:/" + XIL_DIR + "/run_elf_windows.tcl",
         ]
-        subprocess.run(cmd, cwd="/mnt/c")
-    elif args.xilinx_programmer:
-        # Use xilinx programmer
+        subprocess.run(cmd, cwd="/mnt/c/" + XIL_DIR)
+    elif args.xilinx:
+        # Use Xilinx programmer in Linux
         my_env = os.environ.copy()
-        my_env["ELF_FILE"] = elf_path
-        cmd = [VITIS_BIN, "-batch", str(LABS_DIR / "platforms/zybo/xil_arm_toolchain/run_elf.tcl")]
+        my_env["TERM"] = "vt100"
+        cmd = [XSDB_BIN_LINUX,
+            str(LABS_DIR / "platforms/zybo/xil_arm_toolchain/run_elf.tcl"),
+            str(LABS_DIR / "platforms/hw"),
+            str(elf_path)]
         subprocess.run(cmd, cwd=LABS_DIR, env=my_env)
 
     else:
-
-        # Use openocd programmer
+        # Use openocd programmer in Linux
         programmer_path = LABS_DIR / "tools" / "fpga-programmer" / "fpga_programmer.py"
         if not programmer_path.is_file():
             error(
-                "fpga-programmer not found.  Did you remember to run 'make setup' from the top-level directory?"
+                "fpga-programmer not found. Did you remember to run 'make setup' from the top-level directory?"
             )
         cmd = [
             programmer_path,
@@ -155,6 +163,7 @@ def main():
         ]
         subprocess.run(cmd)
 
+    # Print output
     if serial_path:
         print_color(TermColors.PURPLE + "\nPrinting program output from serial (Ctrl+C to quit)")
         while True:
