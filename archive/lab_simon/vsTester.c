@@ -37,7 +37,7 @@ For questions, contact Brad Hutchings or Jeff Goeders, https://ece.byu.edu/
 // the instructions are tailored for the length of the sequence.
 // This assumes a simple incrementing pattern so that it is simple to
 // instruct the user.
-void vsTester_printInstructions(uint8_t length, bool draw) {
+static void vsTester_printInstructions(uint8_t length, bool draw) {
   static uint8_t prevLengthValue = 0;
   if (draw) {
     display_setTextColor(DISPLAY_WHITE);
@@ -72,7 +72,7 @@ void vsTester_printInstructions(uint8_t length, bool draw) {
 }
 
 // Just clears the screen and draws the four buttons used in Simon.
-void vsTester_drawButtons() {
+static void vsTester_drawButtons() {
   // Draw the four buttons.
   simonDisplay_drawButton(BUTTON_0, SIMON_DISPLAY_DRAW);
   simonDisplay_drawButton(BUTTON_1, SIMON_DISPLAY_DRAW);
@@ -82,7 +82,7 @@ void vsTester_drawButtons() {
 
 // This will set the sequence to a simple sequential pattern.
 #define MAX_TEST_SEQUENCE_LENGTH 4 // the maximum length of the pattern
-uint8_t vsTester_testSequence[MAX_TEST_SEQUENCE_LENGTH] = {
+static uint8_t vsTester_testSequence[MAX_TEST_SEQUENCE_LENGTH] = {
     0, 1, 2, 3}; // A simple pattern.
 
 // Increment the sequence length making sure to skip over 0.
@@ -104,7 +104,7 @@ typedef enum {
 } vsTester_infoMessage_t;
 
 // Prints out informational messages based upon a message type (see above).
-void vsTester_printInfoMessage(vsTester_infoMessage_t messageType, bool draw) {
+static void vsTester_printInfoMessage(vsTester_infoMessage_t messageType, bool draw) {
   // Setup text color, position and clear the screen.
   static vsTester_infoMessage_t prevType;
   if (draw) {
@@ -148,7 +148,7 @@ typedef enum {
   vsTester_done_st
 } vsTester_state_t;
 vsTester_state_t vsTester_currentState;
-uint16_t sequenceLength;
+static uint16_t sequenceLength;
 
 void vsTester_init() {
   display_init();
