@@ -67,6 +67,8 @@ set(TEMP_PATH /mnt/c/temp/xilinx)
 # make BOOT.bin ELF_PATH=...
 # This command is used to create an SD card image.
 add_custom_target(BOOT.bin
+    COMMAND if [ -z \${ELF_PATH} ]\; then echo '\\033[0;31mSpecify an ELF_PATH. Example: make BOOT.bin ELF_PATH=labs/lab1.elf\\033[0m'\;exit 1\; fi
+    COMMAND if [ ! -f \${ELF_PATH} ]\; then echo '\\033[0;31mThe file \${ELF_PATH} does not exist.\\033[0m'\;exit 1\; fi
     COMMAND mkdir -p ${TEMP_PATH}
     COMMAND cp ../platforms/hw/fsbl.elf ${TEMP_PATH}
     COMMAND cp ../platforms/hw/330_hw_system.bit ${TEMP_PATH}
@@ -88,6 +90,8 @@ set(XIL_TOOL_PATH /tools/Xilinx/Vivado/2023.1)
 # make BOOT.bin ELF_PATH=...
 # This command is used to create an SD card image.
 add_custom_target(BOOT.bin
+    COMMAND if [ -z \${ELF_PATH} ]\; then echo '\\033[0;31mSpecify an ELF_PATH. Example: make BOOT.bin ELF_PATH=labs/lab1.elf\\033[0m'\;exit 1\; fi
+    COMMAND if [ ! -f \${ELF_PATH} ]\; then echo '\\033[0;31mThe file \${ELF_PATH} does not exist.\\033[0m'\;exit 1\; fi
     COMMAND echo '//arch = zynq; split = false; format = BIN' > conf.bif
     COMMAND echo 'the_ROM_image:' >> conf.bif
     COMMAND echo '{' >> conf.bif
