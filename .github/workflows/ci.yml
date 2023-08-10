@@ -9,9 +9,9 @@ jobs:
     - name: Install packages
       run: |
         sudo make install
-        sudo make setup        
+        sudo make setup
     - name: Compile emulator
-      run: cd build && rm -rf ./* && cmake .. -DEMU=1 && make -j4  
+      run: cd build && rm -rf ./* && cmake .. -DEMU=1 && make -j4
     - name: Compile Zybo
       run: cd build && rm -rf ./* && cmake .. && make -j4
     - name: Check C/C++ formatting
