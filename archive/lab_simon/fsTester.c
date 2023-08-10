@@ -47,8 +47,8 @@ typedef enum {
 } fsTester_cs_t;
 
 static fsTester_cs_t fsTester_currentState; // fsTester current state.
-static uint16_t sequenceLength;                    // Current sequence length.
-static uint16_t fsTester_msgDelayCount;            // Counter for a delay.
+static uint16_t sequenceLength;             // Current sequence length.
+static uint16_t fsTester_msgDelayCount;     // Counter for a delay.
 
 #define FS_EXER_MSG_DELAY 20 // Provides a delay to read message.
 

@@ -104,7 +104,8 @@ typedef enum {
 } vsTester_infoMessage_t;
 
 // Prints out informational messages based upon a message type (see above).
-static void vsTester_printInfoMessage(vsTester_infoMessage_t messageType, bool draw) {
+static void vsTester_printInfoMessage(vsTester_infoMessage_t messageType,
+                                      bool draw) {
   // Setup text color, position and clear the screen.
   static vsTester_infoMessage_t prevType;
   if (draw) {
