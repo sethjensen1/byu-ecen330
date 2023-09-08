@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ":ab5",
+            "name": "Lab1",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/lab5/lab5.elf",
+            "program": "${workspaceFolder}/build_emu/lab1_helloworld/lab1.elf",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

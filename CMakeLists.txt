@@ -8,7 +8,7 @@ include_directories(drivers)
 # add_compile_options(-Wall)
 # add_compile_options(-Wall -Wextra -pedantic -Werror)
 
-# set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Debug)
 
 set(ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 

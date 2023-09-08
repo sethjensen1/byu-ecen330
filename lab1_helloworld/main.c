@@ -13,9 +13,14 @@ For questions, contact Brad Hutchings or Jeff Goeders, https://ece.byu.edu/
 
 #include "display.h"
 
-#define TEXT_SIZE 2
-#define CURSOR_X 10
-#define CURSOR_Y (DISPLAY_HEIGHT / 2)
+#define DISPLAY_CENTER_X (DISPLAY_WIDTH / 2)
+#define DISPLAY_CENTER_Y (DISPLAY_HEIGHT / 2)
+
+#define CIRCLE_RADIUS 30
+#define CIRCLE_DISTANCE (DISPLAY_WIDTH / 4)
+
+#define TRIANGLE_DISTANCE (DISPLAY_HEIGHT / 8)
+#define TRIANGLE_HALF_BASE (30)
 
 // Print out "hello world" on both the console and the LCD screen.
 int main() {
@@ -24,15 +29,19 @@ int main() {
   display_init();
   display_fillScreen(DISPLAY_BLACK); // Blank the screen.
 
-  // Configure display text settings
-  display_setTextColor(DISPLAY_RED); // Make the text red.
-  display_setTextSize(TEXT_SIZE);    // Make the text a little larger.
+  // Draw two lines crossing the screen diagonally
+  display_drawLine(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_GREEN);
+  display_drawLine(0, DISPLAY_HEIGHT, DISPLAY_WIDTH, 0, DISPLAY_GREEN);
 
-  // Set the cursor location and print to the LCD
-  display_setCursor(CURSOR_X, CURSOR_Y);
-  display_println("hello world (on the LCD)!");
+  // Draw two symmetrically positioned triangles, fill the top one
+  display_drawTriangle(DISPLAY_CENTER_X, (DISPLAY_CENTER_Y + TRIANGLE_DISTANCE), (DISPLAY_CENTER_X - TRIANGLE_HALF_BASE), (DISPLAY_HEIGHT - TRIANGLE_DISTANCE), (DISPLAY_CENTER_X + TRIANGLE_HALF_BASE), (DISPLAY_HEIGHT - TRIANGLE_DISTANCE), DISPLAY_YELLOW);
+  display_drawTriangle(DISPLAY_CENTER_X, (DISPLAY_CENTER_Y - TRIANGLE_DISTANCE), (DISPLAY_CENTER_X - TRIANGLE_HALF_BASE), (TRIANGLE_DISTANCE), (DISPLAY_CENTER_X + TRIANGLE_HALF_BASE), (TRIANGLE_DISTANCE), DISPLAY_YELLOW);
+  display_fillTriangle(DISPLAY_CENTER_X, (DISPLAY_CENTER_Y - TRIANGLE_DISTANCE), (DISPLAY_CENTER_X - TRIANGLE_HALF_BASE), (TRIANGLE_DISTANCE), (DISPLAY_CENTER_X + TRIANGLE_HALF_BASE), (TRIANGLE_DISTANCE), DISPLAY_YELLOW);
 
-  // Also print out 'hello world' on the terminal (stdout).
-  printf("hello world!\n");
+  // Draw two symmetrically positioned circles, fill in the right one
+  display_drawCircle((DISPLAY_CENTER_X - CIRCLE_DISTANCE), DISPLAY_CENTER_Y, CIRCLE_RADIUS, DISPLAY_RED);
+  display_drawCircle((DISPLAY_CENTER_X + CIRCLE_DISTANCE), DISPLAY_CENTER_Y, CIRCLE_RADIUS, DISPLAY_RED);
+  display_fillCircle((DISPLAY_CENTER_X + CIRCLE_DISTANCE), DISPLAY_CENTER_Y, CIRCLE_RADIUS, DISPLAY_RED);
+
   return 0;
 }
