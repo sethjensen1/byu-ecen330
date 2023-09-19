@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Lab1",
+            "name": "Lab3 milestone 1",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build_emu/lab1_helloworld/lab1.elf",
+            "program": "${workspaceFolder}/build_emu/lab3_timer/lab3_m1.elf",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
