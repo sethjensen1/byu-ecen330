@@ -16,6 +16,10 @@
 #define TCSR0_LOAD0_MASK 0x20
 #define TCSR0_ENT0_MASK 0x80
 #define TCSR0_ARHT0_MASK 0x10
+#define TCSR0_ENIT0_MASK 0x40
+#define TCSR0_INT0_MASK 0x100
+
+#define TCSR1_ENIT1_MASK 0x40
 
 #define TCSR1_LOAD1_MASK 0x20
 #define TCSR1_ENT1_MASK 0x80
@@ -157,4 +161,23 @@ void intervalTimer_initCountDown(uint32_t timerNumber, double period) {
 
   // 3. Call the _reload function to move the LOAD values into the Counters
   intervalTimer_reload(timerNumber);
+}
+
+// Enable the interrupt output of the given timer.
+void intervalTimer_enableInterrupt(uint8_t timerNumber) {
+  writeRegister(timerNumber, TCSR0_OFFSET,
+                readRegister(timerNumber, TCSR0_OFFSET) | TCSR0_ENIT0_MASK);
+  // do i need to enable the interrupt for timer 1? I don't think so
+}
+
+// Disable the interrupt output of the given timer.
+void intervalTimer_disableInterrupt(uint8_t timerNumber) {
+  writeRegister(timerNumber, TCSR0_OFFSET,
+                readRegister(timerNumber, TCSR0_OFFSET) & ~TCSR0_ENIT0_MASK);
+}
+
+// Acknowledge the rollover to clear the interrupt output.
+void intervalTimer_ackInterrupt(uint8_t timerNumber) {
+  writeRegister(timerNumber, TCSR0_OFFSET,
+                readRegister(timerNumber, TCSR0_OFFSET) | TCSR0_INT0_MASK);
 }
