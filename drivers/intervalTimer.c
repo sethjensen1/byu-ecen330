@@ -24,6 +24,8 @@
 #define TCSR1_LOAD1_MASK 0x20
 #define TCSR1_ENT1_MASK 0x80
 
+#define UPPER_SHIFT 32
+
 // Assuming XPAR_AXI_TIMER_0_CLOCK_FREQ_HZ = 100000000
 #define CYCLE_DURATION 0.000000010
 
@@ -152,8 +154,8 @@ void intervalTimer_initCountDown(uint32_t timerNumber, double period) {
 
   // 2. Initialize LOAD registers with appropriate values, given the `period`.
   // Multiply the period by the Hz of the clock to get number of clock cycles
-  uint64_t durationInCycles = (uint64_t)period * XPAR_AXI_TIMER_0_CLOCK_FREQ_HZ;
-  uint32_t upper = durationInCycles >> 32;
+  uint64_t durationInCycles = period * XPAR_AXI_TIMER_0_CLOCK_FREQ_HZ;
+  uint32_t upper = durationInCycles >> UPPER_SHIFT;
   uint32_t lower = durationInCycles;
 
   writeRegister(timerNumber, TLR0_OFFSET, lower);
