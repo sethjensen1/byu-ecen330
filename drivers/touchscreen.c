@@ -10,7 +10,7 @@ enum touchscreen_state {
   waiting_st,
   adc_settling_st,
   pressed_st
-} currentState = waiting_st;
+} touchscreen_current_state = waiting_st;
 
 static touchscreen_status_t status;
 static uint64_t adc_settle_ticks;
@@ -19,20 +19,20 @@ static int16_t x, y;
 static uint8_t z;
 
 // print the current state for debugging
-void debugStatePrint() {
+void touchscreen_debugStatePrint() {
   static enum touchscreen_state previousState;
   static bool firstPass = true;
 
   // initialize the previousState if it's the first pass
   if (firstPass) {
-    previousState = currentState;
+    previousState = touchscreen_current_state;
     firstPass = false;
   }
 
   // if the state has changed, print the state and update previousState for the
   // next iteration
-  if (currentState != previousState) {
-    switch (currentState) {
+  if (touchscreen_current_state != previousState) {
+    switch (touchscreen_current_state) {
     case waiting_st:
       printf("waiting_st\n");
       break;
@@ -43,48 +43,48 @@ void debugStatePrint() {
       printf("pressed_st\n");
       break;
     }
-    previousState = currentState;
+    previousState = touchscreen_current_state;
   }
 }
 
 // Initialize the touchscreen driver state machine, with a given tick period (in
 // seconds).
 void touchscreen_init(double period_seconds) {
-  currentState = TOUCHSCREEN_IDLE;
+  touchscreen_current_state = waiting_st;
   adc_timer = 0;
   adc_settle_ticks = ADC_SETTLE_TIME / period_seconds;
 }
 
 // Tick the touchscreen driver state machine
 void touchscreen_tick() {
-  debugStatePrint();
+  // touchscreen_debugStatePrint();
 
   // Transition
-  switch (currentState) {
+  switch (touchscreen_current_state) {
   case waiting_st:
     if (display_isTouched()) {
       display_clearOldTouchData();
-      currentState = adc_settling_st;
+      touchscreen_current_state = adc_settling_st;
     }
     break;
   case adc_settling_st:
     if (!display_isTouched()) {
-      currentState = waiting_st;
+      touchscreen_current_state = waiting_st;
     } else if (display_isTouched() && adc_timer == adc_settle_ticks) {
       display_getTouchedPoint(&x, &y, &z);
-      currentState = pressed_st;
+      touchscreen_current_state = pressed_st;
     }
     break;
   case pressed_st:
     if (!display_isTouched()) {
       status = TOUCHSCREEN_RELEASED;
-      currentState = waiting_st;
+      touchscreen_current_state = waiting_st;
     }
     break;
   }
 
   // Action
-  switch (currentState) {
+  switch (touchscreen_current_state) {
   case waiting_st:
     adc_timer = 0;
     break;

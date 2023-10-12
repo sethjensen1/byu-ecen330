@@ -12,6 +12,25 @@
 
 volatile static display_point_t point1;
 volatile static uint8_t radius;
+static enum {
+  red = DISPLAY_RED,
+  black = DISPLAY_BLACK,
+  blue = DISPLAY_BLUE,
+  dark_blue = DISPLAY_DARK_BLUE,
+  dark_red = DISPLAY_DARK_RED,
+  green = DISPLAY_GREEN,
+  dark_green = DISPLAY_DARK_GREEN,
+  cyan = DISPLAY_CYAN,
+  dark_cyan = DISPLAY_DARK_CYAN,
+  magenta = DISPLAY_MAGENTA,
+  dark_magenta = DISPLAY_DARK_MAGENTA,
+  yellow = DISPLAY_YELLOW,
+  dark_yellow = DISPLAY_DARK_YELLOW,
+  white = DISPLAY_WHITE,
+  gray = DISPLAY_GRAY,
+  dark_gray = DISPLAY_DARK_GRAY,
+  light_gray = DISPLAY_LIGHT_GRAY
+} currentColor = red;
 
 volatile static enum {
   TEST_IDLE_ST,
@@ -52,18 +71,73 @@ void test_tick() {
   switch (currentState) {
   case TEST_TOUCH_PRESSED_ST:
     if (radius < CIRCLE_RADIUS_MAX) {
-      display_fillCircle(point1.x, point1.y, radius, DISPLAY_RED);
+      display_fillCircle(point1.x, point1.y, radius, currentColor);
       radius++;
     }
     break;
   case TEST_TOUCH_RELEASED_ST:
     // Press released, draw empty circle and acknowledge press
     display_fillCircle(point1.x, point1.y, radius, DISPLAY_BLACK);
-    display_drawCircle(point1.x, point1.y, radius, DISPLAY_RED);
+    display_drawCircle(point1.x, point1.y, radius, currentColor);
     // Shows blue circle if release location is different from press
     if (point1.x != point2.x || point1.y != point2.y)
       display_drawCircle(point2.x, point2.y, radius, DISPLAY_BLUE);
     touchscreen_ack_touch();
+    break;
+  }
+
+  // Cycle between colors for fun
+  switch (currentColor) {
+  case black:
+    currentColor = blue;
+    break;
+  case blue:
+    currentColor = dark_blue;
+    break;
+  case dark_blue:
+    currentColor = red;
+    break;
+  case red:
+    currentColor = dark_red;
+    break;
+  case dark_red:
+    currentColor = green;
+    break;
+  case green:
+    currentColor = dark_green;
+    break;
+  case dark_green:
+    currentColor = cyan;
+    break;
+  case cyan:
+    currentColor = dark_cyan;
+    break;
+  case dark_cyan:
+    currentColor = magenta;
+    break;
+  case magenta:
+    currentColor = dark_magenta;
+    break;
+  case dark_magenta:
+    currentColor = yellow;
+    break;
+  case yellow:
+    currentColor = dark_yellow;
+    break;
+  case dark_yellow:
+    currentColor = white;
+    break;
+  case white:
+    currentColor = gray;
+    break;
+  case gray:
+    currentColor = dark_gray;
+    break;
+  case dark_gray:
+    currentColor = light_gray;
+    break;
+  case light_gray:
+    currentColor = black;
     break;
   }
 }
