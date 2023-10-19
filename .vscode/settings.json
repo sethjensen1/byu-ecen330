@@ -6,5 +6,8 @@
         "editor.formatOnSave": true,
     },
     "C_Cpp.clang_format_fallbackStyle": "LLVM",
-    "cmake.configureOnOpen": true
+    "cmake.configureOnOpen": true,
+    "files.associations": {
+        "ranges": "c"
+    }
 }
