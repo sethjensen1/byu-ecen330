@@ -10,7 +10,7 @@
 
 #define BOARD_CENTER 1
 
-#define NO_SCORE 999999 // Arbitrary high value to denote no score
+#define NO_SCORE 999 // Arbitrary high value to denote no score
 #define STARTING_DEPTH 0
 
 // global choice of next move
@@ -54,15 +54,17 @@ minimax_score_t minimax(tictactoe_board_t *board, bool is_Xs_turn,
   // Evaluate board based upon prev player's turn.
   minimax_score_t current_score = minimax_computeBoardScore(board, !is_Xs_turn);
 
-  if (minimax_isGameOver(current_score))
+  if (minimax_isGameOver(current_score)) {
     // Recursion base case, there has been a win or a draw.
     return current_score;
+  }
 
   // move/score table in a 2d array. Matches board size, but instead of storing
   // an X or O, stores the score. There's an arbitrary value (NO_SCORE) chosen
   // to represent no score, but it's high enough that no possible path could
   // have that high of a score.
-  minimax_score_t scores[TICTACTOE_BOARD_ROWS][TICTACTOE_BOARD_COLUMNS] = {0};
+  minimax_score_t scores[TICTACTOE_BOARD_ROWS][TICTACTOE_BOARD_COLUMNS] = {
+      NO_SCORE};
 
   // Otherwise, you need to recurse.
   // This loop will generate all possible boards and call
@@ -82,11 +84,12 @@ minimax_score_t minimax(tictactoe_board_t *board, bool is_Xs_turn,
         // choses to play at this location.
         minimax_score_t score = minimax(board, !is_Xs_turn, depth + 1);
 
-        scores[row][column] = score > 1 ? score - depth : score + depth;
-        // scores[row][column] = score;
+        scores[row][column] = score;
 
         // Undo the change to the board
         board->squares[row][column] = MINIMAX_EMPTY_SQUARE;
+      } else {
+        scores[row][column] = NO_SCORE;
       }
     }
   }
@@ -96,19 +99,34 @@ minimax_score_t minimax(tictactoe_board_t *board, bool is_Xs_turn,
   // at this level. Now you need to return the score depending upon whether
   // you are computing min or max.
   minimax_score_t score = 0;
+
+  // So that we can choose the first empty square as a default choice
+  bool finding_first_square = true;
+
   if (is_Xs_turn) {
     minimax_score_t highest = 0;
     // loop through the scores table to find the highest
     for (uint8_t row = 0; row < TICTACTOE_BOARD_ROWS; row++) {
       // loop columns second
       for (uint8_t column = 0; column < TICTACTOE_BOARD_COLUMNS; column++) {
-        // make sure there is a real score stored here, then check it against
-        // the highest
-        if ((scores[row][column] != NO_SCORE) &&
-            scores[row][column] > highest) {
-          highest = scores[row][column];
-          choice.row = row;
-          choice.column = column;
+        // make sure there is a real score stored here
+        if ((scores[row][column] != NO_SCORE)) {
+          // If we haven't made a choice & this is our first empty square,
+          // choose it to start
+          if (finding_first_square) {
+            highest = scores[row][column];
+            choice.row = row;
+            choice.column = column;
+
+            finding_first_square = false;
+          }
+
+          // compare with the highest score and replace if necessary
+          if (scores[row][column] > highest) {
+            highest = scores[row][column];
+            choice.row = row;
+            choice.column = column;
+          }
         }
       }
     }
@@ -119,12 +137,24 @@ minimax_score_t minimax(tictactoe_board_t *board, bool is_Xs_turn,
     for (uint8_t row = 0; row < TICTACTOE_BOARD_ROWS; row++) {
       // loop columns second
       for (uint8_t column = 0; column < TICTACTOE_BOARD_COLUMNS; column++) {
-        // make sure there is a real score stored here, then check it against
-        // the lowest
-        if ((scores[row][column] != NO_SCORE) && scores[row][column] < lowest) {
-          lowest = scores[row][column];
-          choice.row = row;
-          choice.column = column;
+        // make sure there is a real score stored here
+        if ((scores[row][column] != NO_SCORE)) {
+          // If we haven't made a choice & this is our first empty square,
+          // choose it to start
+          if (finding_first_square) {
+            lowest = scores[row][column];
+            choice.row = row;
+            choice.column = column;
+
+            finding_first_square = false;
+          }
+
+          // compare with the highest score and replace if necessary
+          if (scores[row][column] < lowest) {
+            lowest = scores[row][column];
+            choice.row = row;
+            choice.column = column;
+          }
         }
       }
     }
@@ -281,11 +311,9 @@ minimax_score_t minimax_computeBoardScore(tictactoe_board_t *board,
 // (helper) function.
 tictactoe_location_t minimax_computeNextMove(tictactoe_board_t *board,
                                              bool is_Xs_turn) {
-  minimax_printBoard(*board);
-  printf(
-      "%d\n",
-      minimax(board, is_Xs_turn,
-              STARTING_DEPTH)); // This will modify the global choice variable
+  // minimax_printBoard(*board);
+  minimax(board, is_Xs_turn,
+          STARTING_DEPTH); // This will modify the global choice variable
   return choice;
 }
 
