@@ -8,6 +8,8 @@
     "C_Cpp.clang_format_fallbackStyle": "LLVM",
     "cmake.configureOnOpen": true,
     "files.associations": {
-        "ranges": "c"
+        "ranges": "c",
+        "tictactoe.h": "c",
+        "plane.h": "c"
     }
 }
