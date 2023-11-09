@@ -7,7 +7,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define DISTANCE(x1, y1, x2, y2) sqrt(pow((y2 - y1), 2) + pow((x2 - x1), 2))
+
 #define ENEMY_Y_RANGE (DISPLAY_HEIGHT / 5)
+#define ENEMY_IMPACT_THRESHOLD (DISPLAY_HEIGHT)
 
 #define LAUNCH_SITE_0_MAX_X (DISPLAY_WIDTH * 3) / 8
 #define LAUNCH_SITE_1_MAX_X (DISPLAY_WIDTH * 5) / 8
@@ -56,8 +59,7 @@ void missile_init_dead(missile_t *missile) {
 void missile_init_enemy(missile_t *missile) {
   missile->type = MISSILE_TYPE_ENEMY;
 
-  // Set x,y origin to random place near the top
-  // of the screen (top quarter? – you choose!)
+  // Set x,y origin to random place near the top of the screen
   missile->x_origin = rand() % DISPLAY_WIDTH;
   missile->y_origin = rand() % ENEMY_Y_RANGE;
 
@@ -82,6 +84,8 @@ void missile_init_player(missile_t *missile, uint16_t x_dest, uint16_t y_dest) {
 
   display_point_t closest_launch_site;
 
+  // Set the origin to the launch site closest
+  // (in the x-plane) to the destination
   if (x_dest < LAUNCH_SITE_0_MAX_X) {
     closest_launch_site.x = LAUNCH_SITE_0_X;
     closest_launch_site.y = LAUNCH_SITE_0_Y;
@@ -118,6 +122,9 @@ void missile_tick(missile_t *missile) {
   uint16_t current_color;
   uint16_t current_distance_per_tick;
 
+  // Set the current color and distance per
+  // tick to the config values corresponding to
+  // the current missile type
   switch (missile->type) {
   case MISSILE_TYPE_PLAYER:
     current_color = CONFIG_COLOR_PLAYER;
@@ -142,8 +149,8 @@ void missile_tick(missile_t *missile) {
     // state
     missile->length = 0;
     missile->explode_me = false;
-    missile->total_length = sqrt(pow((missile->y_dest - missile->y_origin), 2) +
-                                 pow((missile->x_dest - missile->x_origin), 2));
+    missile->total_length = DISTANCE(missile->x_origin, missile->y_origin,
+                                     missile->x_dest, missile->y_dest);
     missile->x_current = missile->x_origin;
     missile->y_current = missile->y_origin;
     missile->impacted = false;
@@ -151,25 +158,30 @@ void missile_tick(missile_t *missile) {
 
     break;
   case MISSILE_FLY_ST:
-    if (missile->explode_me || missile->length >= missile->total_length) {
+    // If the missile gets the explode_me signal, or if it reaches its total
+    // length, explode it. Otherwise, if it reaches the pixel just above the
+    // bottom of the screen and is a non-player missile, then it impacts
+    if (missile->explode_me || missile->type == MISSILE_TYPE_PLAYER &&
+                                   (missile->length >= missile->total_length)) {
       display_drawLine(missile->x_origin, missile->y_origin, missile->x_current,
                        missile->y_current, CONFIG_BACKGROUND_COLOR);
       missile->currentState = MISSILE_EXPLODE_GROW_ST;
     } else if (missile->type != MISSILE_TYPE_PLAYER &&
-               missile->y_current >= DISPLAY_HEIGHT - 1) {
+               missile->y_current >= ENEMY_IMPACT_THRESHOLD) {
       display_drawLine(missile->x_origin, missile->y_origin, missile->x_current,
                        missile->y_current, CONFIG_BACKGROUND_COLOR);
       missile->currentState = MISSILE_DEAD_ST;
     }
     break;
   case MISSILE_EXPLODE_GROW_ST:
+    // After reaching the max radius, go to the shrink state
     if (missile->radius >= CONFIG_EXPLOSION_MAX_RADIUS) {
       missile->currentState = MISSILE_EXPLODE_SHRINK_ST;
     }
     break;
   case MISSILE_EXPLODE_SHRINK_ST:
-    if (missile->radius ==
-        0) { // We always subtract with a minimum of 0, so it will always hit 0
+    // We always subtract down to a minimum of 0, so it will always hit 0
+    if (missile->radius == 0) {
       missile->currentState = MISSILE_DEAD_ST;
     }
     break;
@@ -182,11 +194,14 @@ void missile_tick(missile_t *missile) {
   case MISSILE_INIT_ST:
     break;
   case MISSILE_FLY_ST:
+    // erase line
     display_drawLine(missile->x_origin, missile->y_origin, missile->x_current,
                      missile->y_current, CONFIG_BACKGROUND_COLOR);
 
+    // update length
     missile->length += current_distance_per_tick;
 
+    // update current position
     missile->x_current =
         missile->x_origin + (missile->length / missile->total_length) *
                                 (missile->x_dest - missile->x_origin);
@@ -194,6 +209,7 @@ void missile_tick(missile_t *missile) {
         missile->y_origin + (missile->length / missile->total_length) *
                                 (missile->y_dest - missile->y_origin);
 
+    // draw new line
     display_drawLine(missile->x_origin, missile->y_origin, missile->x_current,
                      missile->y_current, current_color);
     break;
@@ -206,12 +222,16 @@ void missile_tick(missile_t *missile) {
     // Erase the current circle, then shrink and draw the new one
     display_fillCircle(missile->x_current, missile->y_current, missile->radius,
                        CONFIG_BACKGROUND_COLOR);
+
+    // shrink the radius, and if it would overflow due to subtracting below 0,
+    // set it to 0 instead
     if (missile->radius < CONFIG_EXPLOSION_RADIUS_CHANGE_PER_TICK) {
       missile->radius = 0;
     } else {
       missile->radius -= CONFIG_EXPLOSION_RADIUS_CHANGE_PER_TICK;
     }
 
+    // draw new circle, as long as the radius is > 0
     if (missile->radius > 0) {
       display_fillCircle(missile->x_current, missile->y_current,
                          missile->radius, current_color);
