@@ -112,7 +112,22 @@ void missile_init_player(missile_t *missile, uint16_t x_dest, uint16_t y_dest) {
 // Initialize the missile as a plane missile.  This function takes an (x, y)
 // location of the plane which will be used as the origin.  The destination can
 // be randomly chosed along the bottom of the screen.
-void missile_init_plane(missile_t *missile, int16_t plane_x, int16_t plane_y);
+void missile_init_plane(missile_t *missile, int16_t plane_x, int16_t plane_y) {
+  missile->type = MISSILE_TYPE_PLANE;
+
+  // Set x,y origin based on given parameters
+  missile->x_origin = plane_x;
+  missile->y_origin = plane_y;
+
+  // Set x,y destination to random location along
+  // the bottom of the screen
+
+  missile->x_dest = rand() % DISPLAY_WIDTH;
+  missile->y_dest = DISPLAY_HEIGHT;
+
+  // Set current state
+  missile->currentState = MISSILE_INIT_ST;
+}
 
 ////////// State Machine TICK Function //////////
 void missile_tick(missile_t *missile) {
@@ -171,6 +186,7 @@ void missile_tick(missile_t *missile) {
       display_drawLine(missile->x_origin, missile->y_origin, missile->x_current,
                        missile->y_current, CONFIG_BACKGROUND_COLOR);
       missile->currentState = MISSILE_DEAD_ST;
+      missile->impacted = true;
     }
     break;
   case MISSILE_EXPLODE_GROW_ST:
@@ -261,7 +277,9 @@ bool missile_is_flying(missile_t *missile) {
 
 // Used to indicate that a flying missile should be detonated.  This occurs when
 // an enemy or plane missile is located within an explosion zone.
-void missile_trigger_explosion(missile_t *missile);
+void missile_trigger_explosion(missile_t *missile) {
+  missile->explode_me = true;
+}
 
 // print the current state for debugging
 void missile_debugStatePrint(missile_t *missile) {
