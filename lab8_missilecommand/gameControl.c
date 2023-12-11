@@ -4,8 +4,20 @@
 
 #include "config.h"
 #include "missile.h"
+#ifdef LAB8_M3
 #include "plane.h"
+#endif
 #include "touchscreen.h"
+
+#define CONFIG_STATS_SHOT_CURSOR_X 0
+#define CONFIG_STATS_IMPACTED_CURSOR_X DISPLAY_WIDTH / 2
+
+#define CONFIG_STATS_SHOT_NUMBER_CURSOR_X 35
+#define CONFIG_STATS_IMPACTED_NUMBER_CURSOR_X (DISPLAY_WIDTH / 2) + 60
+
+#define CONFIG_STATS_CURSOR_Y 10
+#define CONFIG_STATS_TEXT_SIZE 1
+#define CONFIG_STATS_TEXT_COLOR DISPLAY_WHITE
 
 #define DISTANCE(x1, y1, x2, y2) sqrt(pow((y2 - y1), 2) + pow((x2 - x1), 2))
 
@@ -32,8 +44,10 @@ void gameControl_init() {
     missile_init_dead(&player_missiles[i]);
   }
 
+#ifdef LAB8_M3
   // Initialize plane (which initializes the plane missile)
   plane_init(&plane_missile);
+#endif
 
   display_fillScreen(CONFIG_BACKGROUND_COLOR);
 
@@ -139,6 +153,7 @@ void gameControl_tick() {
 
   // Detect plane collisions
 
+#ifdef LAB8_M3
   display_point_t currentPlanePosition = plane_getXY();
 
   // Check if plane collides with any enemy missiles
@@ -181,6 +196,7 @@ void gameControl_tick() {
       plane_explode();
     }
   }
+#endif
 
   // Check every enemy missile for collisions
   for (uint16_t i = 0; i < CONFIG_MAX_ENEMY_MISSILES; i++) {
@@ -205,7 +221,9 @@ void gameControl_tick() {
   }
 
   // Tick the plane
+#ifdef LAB8_M3
   plane_tick();
+#endif
 
   // Stats
 

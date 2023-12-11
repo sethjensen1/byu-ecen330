@@ -1,7 +1,6 @@
 #include "missile.h"
 #include "config.h"
 #include "display.h"
-#include "touchscreen.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -78,8 +77,6 @@ void missile_init_enemy(missile_t *missile) {
 // origin should be the closest "firing location" to the destination (there are
 // three firing locations evenly spaced along the bottom of the screen).
 void missile_init_player(missile_t *missile, uint16_t x_dest, uint16_t y_dest) {
-  touchscreen_init(CONFIG_TOUCHSCREEN_TIMER_PERIOD);
-
   missile->type = MISSILE_TYPE_PLAYER;
 
   display_point_t closest_launch_site;

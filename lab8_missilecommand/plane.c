@@ -13,6 +13,15 @@ typedef enum { PLANE_INIT_ST, PLANE_FLY_ST, PLANE_DEAD_ST } plane_state_t;
 #define PLANE_MAX_DISTANCE_TRAVELED DISPLAY_WIDTH
 #define PLANE_LAUNCH_DISTANCE DISPLAY_WIDTH / 2
 
+// Plane respawn time
+#define CONFIG_PLANE_RESPAWN_DELAY_S 5
+#define CONFIG_PLANE_RESPAWN_DELAY_TICKS                                       \
+  CONFIG_PLANE_RESPAWN_DELAY_S / CONFIG_GAME_TIMER_PERIOD
+
+// plane size
+#define CONFIG_PLANE_WIDTH 20
+#define CONFIG_PLANE_HEIGHT 16
+
 static plane_state_t plane_currentState = PLANE_INIT_ST;
 
 static uint16_t traveled = 0;
